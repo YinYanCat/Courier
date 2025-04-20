@@ -6,7 +6,7 @@ class SchemaMiddleware:
 
     def __call__(self, request):
         # Establecer el esquema para todas las consultas
-        connection.schema_name = 'courrier'  
+        connection.schema_name = 'courier'  
 
         print(f"Middleware está usando el esquema: {connection.schema_name}")
 
