@@ -1,26 +1,37 @@
 from django.db import models
 
 class Usuario(models.Model):
-    TIPO_USUARIO = [
-        ('A', 'Admin'),
-        ('C', 'Courrier'),
-        ('P', 'Public'),
-    ]
-
     ESTADO = [
         ('E', 'Enabled'),
         ('D', 'Disabled')
     ]
 
     nombre = models.CharField(max_length=50)
-    correo = models.CharField(max_length=50)
-    fecha_registro = models.DateField(auto_now_add=True)
-    tipo_usuario = models.CharField(max_length=1, choices=TIPO_USUARIO, default='P')
+    nombre_usuario = models.CharField(max_length=50,default='')
+    contraseña = models.CharField(max_length=128,default='')
+    correo = models.EmailField(max_length=50,default='')
+    telefono = models.CharField(max_length=50,default='')
+    fecha_reg = models.DateField(auto_now_add=True)
     fecha_mod = models.DateField(auto_now=True)
-    estado = models.CharField(max_length=1, choices=ESTADO, default='E')
-
+    estado_usuario = models.CharField(max_length=1, choices=ESTADO, default='E')
+    
     def __str__(self):
         return self.nombre
+
+    class Meta():
+        abstract = True
+
+class Cliente(Usuario):
+    pass
+class Repartidor(Usuario):
+    pass
+class Administrador(Usuario):
+    NIVEL_ACCESO = [
+        ('T', 'Total')
+    ]
+    nivel_acceso = models.CharField(max_length=1, choices=NIVEL_ACCESO, default='T')
+    ultimo_acceso = models.DateField(auto_now_add=False)
+
 
 class Estado_entrega(models.Model):
     
@@ -42,13 +53,13 @@ class Ruta(models.Model):
         return f"{self.origen} → {self.destino}"
 
 class Paquete(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    usuario = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     ruta = models.ForeignKey(Ruta, on_delete=models.PROTECT, default=None, null=True)
     alto = models.FloatField()
     ancho = models.FloatField()
     largo = models.FloatField()
     peso = models.FloatField()
-    fecha_aprox = models.DateField()
+    dir_entrega = models.CharField(max_length=200, default=None)
 
     def __str__(self):
         return f"paquete {self.id} para {self.usuario.nombre}"
