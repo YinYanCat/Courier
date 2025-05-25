@@ -1,0 +1,41 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block js %}
+
+{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<h2>Listado de Envíos</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Estado</th>
+        <th>Ruta</th>
+        <th>Acciones</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Juan Pérez</td>
+        <td>En tránsito</td>
+        <td>Ciudad A - Ciudad B</td>
+        <td><a href="detalle.html">Ver detalle</a></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Ana Gómez</td>
+        <td>Entregado</td>
+        <td>Ciudad B - Ciudad C</td>
+        <td><a href="detalle.html">Ver detalle</a></td>
+    </tr>
+</table>
+
+{% endblock %}

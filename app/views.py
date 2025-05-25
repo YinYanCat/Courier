@@ -4,7 +4,9 @@ from django.shortcuts import render
 
 def home(request):
     return render(request, 'app/home.html')
-def contactos(request):
-    return render(request, 'app/contactos.html')
-def crear_usuario(request):
+def registro(request):
     return render(request, 'app/crear_usuario.html')
+def login(request):
+    return render(request, 'app/login.html')
+def envios(request):
+    return render(request, 'app/envios.html')

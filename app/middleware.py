@@ -8,7 +8,5 @@ class SchemaMiddleware:
         # Establecer el esquema para todas las consultas
         connection.schema_name = 'courier'  
 
-        print(f"Middleware está usando el esquema: {connection.schema_name}")
-
         response = self.get_response(request)
         return response

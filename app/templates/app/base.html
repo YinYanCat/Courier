@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourierApp</title>
+    {% load static %}
+
+    
+    <link rel="stylesheet" href="{% static 'app/css/estilos.css' %}">
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+
+    <header id="banner">
+        <h1>CourierApp</h1>
+        <nav id="navbar">
+            <ul>
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div id="content">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </div>
+    {% block js %}
+
+    {% endblock %}
+
+    <footer>
+        <p>2025 Diseño de Software. Equipo 6</p>
+        <p>Servicio al cliente:</p>
+        <p>Email: servicio.cliente@empresa.com</p>
+        <p>Teléfono: +56911111111</p>
+    </footer>
+    
+</body>
+</html>
