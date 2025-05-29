@@ -10,3 +10,5 @@ def login(request):
     return render(request, 'app/login.html')
 def envios(request):
     return render(request, 'app/envios.html')
+def detalle_envios(request, pk):
+    return render(request, 'app/detalle_envios.html', {'envio': pk})
