@@ -8,7 +8,7 @@ from app.factories.ClientFactory import ClientFactory
 def home(request):
     return render(request, 'app/home.html')
 
-def registro(request):
+def registrarse(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
@@ -17,14 +17,16 @@ def registro(request):
             try:
                 factory.crear_usuario(rut=data['rut'], nombre=data['nombre'], apellido=data['apellido'], nombre_usuario=data['nombre_usuario'], contraseña=data['contraseña'], correo=data['correo'], telefono=data['telefono'])
                 messages.success(request, 'Cliente creado con éxito')
-                return redirect('registro')
+                return redirect('registrarse')
             except Exception as e:
                 messages.error(request, f"Error: {str(e)}")
     else:
         form = ClientForm()
-    return render(request, 'app/crear_cliente.html', {'form':form})
+    return render(request, 'app/registratse.html', {'form':form})
 
 def login(request):
     return render(request, 'app/login.html')
 def envios(request):
     return render(request, 'app/envios.html')
+def detalle_envios(request, pk):
+    return render(request, 'app/detalle_envios.html', {'envio': pk})

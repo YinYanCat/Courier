@@ -1,0 +1,9 @@
+{% load static %}
+
+<h1>Detalle del Envío</h1>
+<p>ID: {{ envio.id }}</p>
+<p>Cliente: {{ envio.cliente }}</p>
+<p>Estado: {{ envio.estado }}</p>
+<p>Ruta: {{ envio.ruta }}</p>
+<p>ID Pedido: {{ envio.id_pedido }}</p>
+<a href="{% url 'envios' %}">Volver al listado</a>
