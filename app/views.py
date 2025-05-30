@@ -15,14 +15,23 @@ def registrarse(request):
             data = form.cleaned_data
             factory = ClientFactory()
             try:
-                factory.crear_usuario(rut=data['rut'], nombre=data['nombre'], apellido=data['apellido'], nombre_usuario=data['nombre_usuario'], contraseña=data['contraseña'], correo=data['correo'], telefono=data['telefono'])
-                messages.success(request, 'Cliente creado con éxito')
-                return redirect('registrarse')
+                factory.crear_usuario(
+                    rut=data['rut'],
+                    nombre=data['nombre'],
+                    apellido=data['apellido'],
+                    nombre_usuario=data['nombre_usuario'],
+                    contraseña=data['contraseña'],
+                    correo=data['correo'],
+                    telefono=data['telefono']
+                )
+                messages.success(request, 'Cliente creado con éxito. Ahora puedes iniciar sesión.')
+                return redirect('login')
             except Exception as e:
-                messages.error(request, f"Error: {str(e)}")
+                form.add_error(None, str(e))
     else:
         form = ClientForm()
-    return render(request, 'app/registratse.html', {'form':form})
+    return render(request, 'app/registrarse.html', {'form': form})
+
 
 def login(request):
     return render(request, 'app/login.html')
