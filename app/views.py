@@ -4,8 +4,8 @@ from django.shortcuts import render
 
 def home(request):
     return render(request, 'app/home.html')
-def registro(request):
-    return render(request, 'app/crear_usuario.html')
+def registrarse(request):
+    return render(request, 'app/registrarse.html')
 def login(request):
     return render(request, 'app/login.html')
 def envios(request):
