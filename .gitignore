@@ -1,5 +1,6 @@
 # entorno virtual
 myenv/
+venv/
 
 # ignorar archivos de base de datos locales
 *.sqlite3
