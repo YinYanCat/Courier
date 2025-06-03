@@ -1,40 +1,23 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class Usuario(models.Model):
-    ESTADO = [
-        ('E', 'Enabled'),
-        ('D', 'Disabled')
-    ]
+class Usuario(AbstractUser):
 
-    nombre = models.CharField(max_length=50)
-    nombre_usuario = models.CharField(max_length=50,default='')
-    contraseña = models.CharField(max_length=128,default='')
-    correo = models.EmailField(max_length=50,default='')
-    telefono = models.CharField(max_length=50,default='')
-    fecha_reg = models.DateField(auto_now_add=True)
-    fecha_mod = models.DateField(auto_now=True)
-    estado_usuario = models.CharField(max_length=1, choices=ESTADO, default='E')
-    
-    def __str__(self):
-        return self.nombre
+    rut = models.CharField(max_length=16, unique=True)
+    telefono = models.CharField(max_length=50,default='',null=True)
+    fecha_mod = models.DateField(auto_now=True,null=True)
 
-    class Meta():
-        abstract = True
+class Cliente(models.Model):
+    ##is_staff deberia ser False siempre
+    ##is_superuser deberia ser False siempre
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
 
-class Cliente(Usuario):
-    pass
-class Repartidor(Usuario):
-    pass
-class Administrador(Usuario):
-    NIVEL_ACCESO = [
-        ('T', 'Total')
-    ]
-    nivel_acceso = models.CharField(max_length=1, choices=NIVEL_ACCESO, default='T')
-    ultimo_acceso = models.DateField(auto_now_add=False)
-
+class Administrador(models.Model):
+    ##is_staff deberia ser True siempre
+    ##is_superuser deberia ser False siempre
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
 
 class Estado_entrega(models.Model):
-    
     id = models.CharField(max_length=1, primary_key=True)
     nombre = models.CharField(max_length=50)
 
@@ -52,9 +35,15 @@ class Ruta(models.Model):
     def __str__(self):
         return f"{self.origen} → {self.destino}"
 
+class Repartidor(models.Model):
+    ##is_staff deberia ser False siempre
+    ##is_superuser deberia ser False siempre
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+    ruta = models.ForeignKey(Ruta, on_delete=models.SET_NULL, null=True, blank=True)  
+
 class Paquete(models.Model):
-    usuario = models.ForeignKey(Cliente, on_delete=models.PROTECT)
-    ruta = models.ForeignKey(Ruta, on_delete=models.PROTECT, default=None, null=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
+    ruta = models.ForeignKey(Ruta, on_delete=models.SET_NULL, null=True, blank=True)    
     alto = models.FloatField()
     ancho = models.FloatField()
     largo = models.FloatField()
@@ -62,7 +51,7 @@ class Paquete(models.Model):
     dir_entrega = models.CharField(max_length=200, default=None)
 
     def __str__(self):
-        return f"paquete {self.id} para {self.usuario.nombre}"
+        return f"paquete {self.id} para {self.cliente.nombre}"
 
 class Paquete_Estado(models.Model):
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name="historial_estados")
