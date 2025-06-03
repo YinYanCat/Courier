@@ -1,20 +1,22 @@
-# Ignorar el entorno virtual
+# entorno virtual
 myenv/
 
-# Ignorar archivos de base de datos locales
+# ignorar archivos de base de datos locales
 *.sqlite3
 db.sqlite3
 
-# Ignorar archivos de compilación y temporales
-__pycache__/
+# ignorar archivos de temporales
 *.pyc
+__pycache__/
 
-# Ignorar el archivo .env que contiene información sensible
+# ignorar el archivo .env que contiene información de la BD
 .env
 
-# Ignorar configuraciones de Django locales
+# DJANGO
+
+## configuraciones locales
 *.log
 
-# Otros archivos y carpetas de Django
+## otros
 /media/
 /static/

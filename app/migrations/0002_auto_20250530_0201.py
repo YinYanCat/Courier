@@ -2,22 +2,21 @@
 
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0001_initial'),
-    ]
+	dependencies = [
+		('app', '0001_initial'),
+	]
 
-    operations = [
-        migrations.AlterField(
-            model_name='usuario',
-            name='fecha_mod',
-            field=models.DateField(auto_now=True, null=True),
-        ),
-        migrations.AlterField(
-            model_name='usuario',
-            name='telefono',
-            field=models.CharField(default='', max_length=50, null=True),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name='usuario',
+			name='fecha_mod',
+			field=models.DateField(auto_now=True, null=True),
+		),
+		migrations.AlterField(
+			model_name='usuario',
+			name='telefono',
+			field=models.CharField(default='', max_length=50, null=True),
+		),
+	]
