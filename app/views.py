@@ -3,10 +3,28 @@ from django.contrib import messages
 from app.forms.ClientForm import ClientForm
 from app.factories.ClientFactory import ClientFactory
 
-# Create your views here.
+from .services.CarrierServices import CarrierServices
+
+carrierServices = CarrierServices()
+
+import datetime
 
 def home(request):
 	return render(request, 'app/home.html')
+
+def ver_rutas(request):
+	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	
+	mapView = carrierServices.getRoutesMap(date = tomorrow)
+	
+	return render(request, mapView)
+
+def crear_rutas(request):
+	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	
+	carrierServices.createRoutes(date = tomorrow)
+	
+	return redirect('ver_rutas')
 
 def registrarse(request):
 	if request.method == 'POST':
@@ -32,10 +50,11 @@ def registrarse(request):
 		form = ClientForm()
 	return render(request, 'app/registrarse.html', {'form': form})
 
-
 def login(request):
 	return render(request, 'app/login.html')
+
 def envios(request):
 	return render(request, 'app/envios.html')
+
 def detalle_envios(request, pk):
 	return render(request, 'app/detalle_envios.html', {'envio': pk})

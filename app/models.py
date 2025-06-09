@@ -2,61 +2,67 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Usuario(AbstractUser):
-
-	rut = models.CharField(max_length=16, unique=True)
-	telefono = models.CharField(max_length=50,default='',null=True)
-	fecha_mod = models.DateField(auto_now=True,null=True)
+	rut = models.CharField(max_length = 16, primary_key = True)
+	telefono = models.CharField(max_length = 50, default = '', null = True)
+	
+	modification_date = models.DateTimeField(auto_now = True, null = False)
 
 class Cliente(models.Model):
-	##is_staff deberia ser False siempre
-	##is_superuser deberia ser False siempre
-	usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+	"""
+		* is_staff deberia ser False siempre
+		* is_superuser deberia ser False siempre
+	"""
+	
+	usuario = models.OneToOneField(Usuario, on_delete = models.CASCADE)
 
 class Administrador(models.Model):
-	##is_staff deberia ser True siempre
-	##is_superuser deberia ser False siempre
-	usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-
-class Estado_entrega(models.Model):
-	id = models.CharField(max_length=1, primary_key=True)
-	nombre = models.CharField(max_length=50)
-
-	def __str__(self):
-		return self.nombre
-
-class Ruta(models.Model):
-	latitud = models.FloatField()
-	longitud = models.FloatField()
-	origen = models.CharField(max_length=100)
-	destino = models.CharField(max_length=100)
-	distancia_km = models.FloatField()
-	duracion_estimada = models.FloatField()
-
-	def __str__(self):
-		return f"{self.origen} → {self.destino}"
+	"""
+		* is_staff deberia ser True siempre
+		* is_superuser deberia ser False siempre
+	"""
+	
+	usuario = models.OneToOneField(Usuario, on_delete = models.CASCADE)
 
 class Repartidor(models.Model):
-	##is_staff deberia ser False siempre
-	##is_superuser deberia ser False siempre
-	usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-	ruta = models.ForeignKey(Ruta, on_delete=models.SET_NULL, null=True, blank=True)  
+	"""
+		* is_staff deberia ser False siempre
+		* is_superuser deberia ser False siempre
+	"""
+	
+	usuario = models.OneToOneField(Usuario, on_delete = models.CASCADE)
 
-class Paquete(models.Model):
-	cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
-	ruta = models.ForeignKey(Ruta, on_delete=models.SET_NULL, null=True, blank=True)	
-	alto = models.FloatField()
-	ancho = models.FloatField()
-	largo = models.FloatField()
-	peso = models.FloatField()
-	dir_entrega = models.CharField(max_length=200, default=None)
+class Warehouse(models.Model):
+	location_lon = models.FloatField(default = None, null = False)
+	location_lat = models.FloatField(default = None, null = False)
 
-	def __str__(self):
-		return f"paquete {self.id} para {self.cliente.nombre}"
+class Truck(models.Model):
+	warehouse = models.ForeignKey(Warehouse, on_delete = models.PROTECT)
+	
+	capacity_x = models.FloatField(null = False)
+	capacity_y = models.FloatField(null = False)
+	capacity_z = models.FloatField(null = False)
+	
+	delivery_man = models.ForeignKey(Repartidor, on_delete = models.SET_NULL, null = True)
 
-class Paquete_Estado(models.Model):
-	paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name="historial_estados")
-	estado = models.ForeignKey(Estado_entrega, on_delete=models.SET_NULL,null=True)
-	fecha_hora = models.DateTimeField()
+class Route(models.Model):
+	truck = models.ForeignKey(Truck, on_delete = models.SET_NULL, null = True)
+	
+	date = models.DateField(null = False)
+	data = models.JSONField()
 
-	def __str__(self):
-		return f"{self.paquete} - {self.estado.nombre} ({self.fecha_hora})"
+class DeliveryOrder(models.Model):
+	client = models.ForeignKey(Cliente, on_delete = models.PROTECT)
+	warehouse = models.ForeignKey(Warehouse, on_delete = models.PROTECT, null = False)
+	
+	destination_lon = models.FloatField(default = None, null = False)
+	destination_lat = models.FloatField(default = None, null = False)
+	
+	route = models.ForeignKey(Route, on_delete = models.SET_NULL, null = True)
+	
+	dim_x = models.FloatField(null = False)
+	dim_y = models.FloatField(null = False)
+	dim_z = models.FloatField(null = False)
+	
+	weight = models.FloatField(null = False, blank = False)
+	
+	registration_date = models.DateField(auto_now_add = True, null = False)
