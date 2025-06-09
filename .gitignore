@@ -1,23 +1,23 @@
-# entorno virtual
-myenv/
+# Entorno virtual
 venv/
+myenv/
 
-# ignorar archivos de base de datos locales
+# Ignorar archivos de base de datos locales
 *.sqlite3
 db.sqlite3
 
-# ignorar archivos de temporales
+# Ignorar archivos de temporales
 *.pyc
 __pycache__/
 
-# ignorar el archivo .env que contiene información de la BD
+# Ignorar el archivo .env que contiene información de la BD
 .env
 
 # DJANGO
 
-## configuraciones locales
+## Configuraciones locales
 *.log
 
-## otros
+## Otros
 /media/
 /static/
