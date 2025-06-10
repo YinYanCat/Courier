@@ -38,7 +38,7 @@ def login_view(request):
                 messages.error(request, "Nombre de usuario o contraseña incorrectos.")
                 return redirect('login')
 
-    return render(request, 'login.html')
+    return render(request, 'app/login.html')
 
 
 @login_required
@@ -47,7 +47,7 @@ def home(request):
 
 @login_required
 def reportes(request):
-    return render(request, 'reportes.html')
+    return render(request, 'app/reportes.html')
 
 def registrarse(request):
     if request.method == 'POST':
@@ -66,7 +66,7 @@ def registrarse(request):
                     telefono=data['telefono']
                 )
                 messages.success(request, 'Cliente creado con éxito. Ahora puedes iniciar sesión.')
-                return redirect('login')
+                return redirect('login/')
             except Exception as e:
                 form.add_error(None, str(e))
     else:
