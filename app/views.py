@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from app.forms.ClientForm import ClientForm
 from app.factories.ClientFactory import ClientFactory
 from django.contrib.auth import authenticate, login
@@ -8,7 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 
-# Create your views here.
+from .services.CarrierServices import CarrierServices
+
+carrierServices = CarrierServices()
+
+import datetime
 
 def login_view(request):
     if request.method == "POST":
@@ -49,6 +54,20 @@ def home(request):
 def reportes(request):
     return render(request, 'app/reportes.html')
 
+def ver_rutas(request):
+	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	
+	mapView = carrierServices.viewRoutesOn(date = tomorrow)
+	
+	return HttpResponse(mapView)
+
+def crear_rutas(request):
+	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	
+	carrierServices.createRoutes(date = tomorrow)
+	
+	return redirect('ver_rutas')
+
 def registrarse(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -66,12 +85,17 @@ def registrarse(request):
                     telefono=data['telefono']
                 )
                 messages.success(request, 'Cliente creado con éxito. Ahora puedes iniciar sesión.')
-                return redirect('login/')
+                return redirect('login')
             except Exception as e:
                 form.add_error(None, str(e))
     else:
         form = ClientForm()
     return render(request, 'app/registrarse.html', {'form': form})
+
+@login_required
+def envios(request):
+	return render(request, 'app/envios.html')
+
 
 @login_required
 def envios(request):
