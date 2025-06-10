@@ -80,3 +80,21 @@ def envios(request):
 @login_required
 def detalle_envios(request, pk):
     return render(request, 'app/detalle_envios.html', {'envio': pk})
+
+def crear_paquete(request):
+    return render(request, 'app/crear_paquete.html')
+
+def nuevo_paquete(request):
+    if request.method == 'POST':
+        #cliente = request.POST.get('cliente')
+        #ruta = request.POST.get('ruta')
+        #alto = request.POST.get('alto')
+        #ancho = request.POST.get('ancho')
+        #largo = request.POST.get('largo')
+        #peso = request.POST.get('peso')
+        #dir_entrega = request.POST.get('dir_entrega')
+
+        # TODO: Validar los datos del formulario
+        messages.success(request, 'Paquete creado con éxito.')
+        return redirect('envios')
+    return render(request, 'app/crear_paquete.html')
