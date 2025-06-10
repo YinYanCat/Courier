@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib import messages
+from django.shortcuts import render, redirect
+
 from app.forms.ClientForm import ClientForm
 from app.factories.ClientFactory import ClientFactory
 
@@ -15,9 +17,9 @@ def home(request):
 def ver_rutas(request):
 	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
 	
-	mapView = carrierServices.getRoutesMap(date = tomorrow)
+	mapView = carrierServices.viewRoutesOn(date = tomorrow)
 	
-	return render(request, mapView)
+	return HttpResponse(mapView)
 
 def crear_rutas(request):
 	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)

@@ -54,7 +54,7 @@ class CarrierServices:
 		
 		return
 	
-	def getRoutesMap(SELF, date):
+	def viewRoutesOn(SELF, date):
 		warehouse = CarrierRepository.getWarehouses()[0]
 		
 		mapView = folium.Map(location = (warehouse.location_lat, warehouse.location_lon), zoom_start = 15, tiles = 'CartoDB Positron')
@@ -79,6 +79,4 @@ class CarrierServices:
 			
 			count += 1
 		
-		mapView.save('app/templates/app/map.html')
-		
-		return 'app/map.html'
+		return mapView.get_root().render()
