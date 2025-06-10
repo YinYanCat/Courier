@@ -2,18 +2,24 @@ from app.forms.ClientForm import ClientForm
 from app.factories.ClientFactory import ClientFactory
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import Cliente, Administrador, Repartidor
+from .models import Cliente, Administrador, Repartidor, Usuario
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+
+# Create your views here.
 
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
+
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
+
             if hasattr(user, 'administrador'):
                 return redirect('reportes')
             elif hasattr(user, 'repartidor'):
@@ -24,10 +30,16 @@ def login_view(request):
                 messages.error(request, "Tu cuenta no tiene un rol asignado.")
                 return redirect('login')
         else:
-            messages.error(request, "Nombre de usuario o contraseña incorrectos.")
-            return redirect('login')
 
-    return render(request, 'app/login.html')
+            if not User.objects.filter(username=username).exists():
+                messages.info(request, "El usuario no existe. Por favor, regístrate.")
+                return redirect('registrarse')
+            else:
+                messages.error(request, "Nombre de usuario o contraseña incorrectos.")
+                return redirect('login')
+
+    return render(request, 'login.html')
+
 
 @login_required
 def home(request):
