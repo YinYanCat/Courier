@@ -36,7 +36,7 @@ class Warehouse(models.Model):
 	location_lat = models.FloatField(default = None, null = False)
 
 class Truck(models.Model):
-	warehouse = models.ForeignKey(Warehouse, on_delete = models.PROTECT)
+	warehouse = models.ForeignKey(Warehouse, on_delete = models.PROTECT, null = False)
 	
 	capacity_x = models.FloatField(null = False)
 	capacity_y = models.FloatField(null = False)
@@ -45,7 +45,7 @@ class Truck(models.Model):
 	delivery_man = models.ForeignKey(Repartidor, on_delete = models.SET_NULL, null = True)
 
 class Route(models.Model):
-	truck = models.ForeignKey(Truck, on_delete = models.SET_NULL, null = True)
+	truck = models.ForeignKey(Truck, on_delete = models.PROTECT, null = False)
 	
 	date = models.DateField(null = False)
 	data = models.JSONField()

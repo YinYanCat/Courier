@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+
+<HTML lang = "en">
+	<HEAD>
+		<TITLE> Seleccionar rutas </TITLE>
+	</HEAD>
+	
+	<BODY>
+		<FORM ACTION = "", METHOD = "POST">
+			{% csrf_token %}
+			{{ form }}
+			
+			<INPUT TYPE = "SUBMIT" VALUE = "ver">
+		</FORM>
+		
+		<IFRAME WIDTH = "750" HEIGHT = "750" SRC = "{{ map }}">
+	</BODY>
+</HTML>
