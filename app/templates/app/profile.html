@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tu perfil - Gestión Logística</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'app/css/perfil.css' %}">
+</head>
+<body>
+    <main>
+        <a href="logout">Logout</a> 
+        <h1>Perfil del Usuario</h1>
+        <p><strong>Nombre de Usuario:</strong> {{ usuario.username }}</p>
+        <p><strong>Correo Electrónico:</strong> {{ usuario.email }}</p>
+        <p><strong>RUT:</strong> {{ usuario.rut }}</p>
+        <p><strong>Teléfono:</strong> {{ usuario.telefono }}</p>
+        <p><strong>Roles:</strong> {{ roles|join:", " }}</p>
+
+        <h2>Opciones Disponibles</h2>
+        <ul>
+            {% for opcion in opciones %}
+                <li><a href="{% url opcion.url %}">{{ opcion.nombre }}</a></li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
