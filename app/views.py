@@ -4,12 +4,14 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 from app.forms.ClientForm import ClientForm
 from app.forms.OrderForm import OrderForm
 from app.factories.ClientFactory import ClientFactory
 from app.factories.OrderFactory import OrderFactory
-from .models import Cliente, Administrador, Repartidor, Usuario, DeliveryOrder
+from .models import Cliente, Administrador, Repartidor, Usuario, DeliveryOrder, Truck
+from .services.AdminServices import AdminServices
 
 def home(request):
 	return render(request, 'app/home.html')
@@ -174,10 +176,24 @@ def perfil(request):
 @login_required
 def asignar_conductor(request):
     usuario = request.user
-    if hasattr(usuario, 'administrador'):
-        pass
-    else:
+    if not hasattr(usuario, 'administrador'):
         return redirect('home')
+    
+    camiones = Truck.objects.all()
+    repartidores = Repartidor.objects.all()
+    if request.method == 'POST':
+        truck_id = request.POST.get('truck_id')
+        carrier_id = request.POST.get('repartidor_id')
+        try:
+            AdminServices().setTruckDriver(truck_id,carrier_id)
+            messages.success(request, 'Conductor asignado correctamente.')
+        except ObjectDoesNotExist as e:
+            messages.error(request, f'Error: {str(e)}')
+        return redirect('asignar_conductor')
+    return render(request, 'app/asignar_conductor.html',{
+                'camiones': camiones,
+                'repartidores' : repartidores,
+            })
 
 @login_required
 def mis_rutas(request):
@@ -186,3 +202,4 @@ def mis_rutas(request):
         pass
     else:
         return redirect('home')
+

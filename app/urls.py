@@ -25,5 +25,6 @@ urlpatterns = [
 	path('logout', logout_view, name='logout'),
 	
 	path('envios/', envios, name = 'envios'),
-	path('detalle_envios/<int:pk>/', detalle_envios, name = 'detalle_envios')
+	path('detalle_envios/<int:pk>/', detalle_envios, name = 'detalle_envios'),
+    path('asignar_conductor', asignar_conductor, name='asignar_conductor')
 ]
