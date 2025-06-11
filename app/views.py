@@ -100,12 +100,18 @@ def registrarse(request):
 def envios(request):
     usuario = request.user
     paquetes = []
-    try:
-        cliente = Cliente.objects.get(usuario=usuario)
-        paquetes = DeliveryOrder.objects.filter(client=cliente)
-    except Cliente.DoesNotExist:
-        pass
-
+    if hasattr(usuario, 'cliente'):
+        try:
+            cliente = Cliente.objects.get(usuario=usuario)
+            paquetes = DeliveryOrder.objects.filter(client=cliente)
+        except Cliente.DoesNotExist:
+            pass
+    if hasattr(usuario, 'repartidor'):
+        try:
+            repartidor = Repartidor.objects.get(usuario=usuario)
+            paquetes = DeliveryOrder.objects.filter(route__truck__delivery_man=repartidor)
+        except Repartidor.DoesNotExist:
+            pass
     return render(request, 'app/envios.html', {'paquetes':paquetes})
 
 @login_required
@@ -187,3 +193,19 @@ def perfil(request):
         'roles': roles,
         'opciones': opciones
     })
+
+@login_required
+def asignar_conductor(request):
+    usuario = request.user
+    if hasattr(usuario, 'administrador'):
+        pass
+    else:
+        return redirect('home')
+
+@login_required
+def mis_rutas(request):
+    usuario = request.user
+    if hasattr(usuario, 'repartidor'):
+        pass
+    else:
+        return redirect('home')
