@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import home, ver_rutas, crear_rutas, registrarse, envios, detalle_envios, login_view, reportes, crear_paquete, perfil
+from .views import home, ver_rutas, crear_rutas, registrarse, envios, detalle_envios, login_view, logout_view, reportes, crear_paquete, perfil
 
 urlpatterns = [
 	path('', home, name='home'),
@@ -16,4 +16,5 @@ urlpatterns = [
   	path('reportes/', reportes, name = 'reportes'),
   	path('crear_paquete/', crear_paquete, name = 'crear_paquete'),
 	path('perfil', perfil, name='perfil'),
+	path('logout', logout_view, name='logout'),
 ]

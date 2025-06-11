@@ -3,7 +3,7 @@ from app.forms.ClientForm import ClientForm
 from app.forms.OrderForm import OrderForm
 from app.factories.ClientFactory import ClientFactory
 from app.factories.OrderFactory import OrderFactory
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from .models import Cliente, Administrador, Repartidor, Usuario, DeliveryOrder
 from django.contrib import messages
@@ -27,17 +27,8 @@ def login_view(request):
         if user is not None:
             login(request, user)
 
-            if hasattr(user, 'administrador'):
-                return redirect('reportes')
-            elif hasattr(user, 'repartidor'):
-                return redirect('detalle_envios')
-            elif hasattr(user, 'cliente'):
-                return redirect('envios')
-            else:
-                messages.error(request, "Tu cuenta no tiene un rol asignado.")
-                return redirect('login')
+            return redirect('perfil')
         else:
-
             if not User.objects.filter(username=username).exists():
                 messages.info(request, "El usuario no existe. Por favor, regístrate.")
                 return redirect('registrarse')
@@ -47,6 +38,10 @@ def login_view(request):
 
     return render(request, 'app/login.html')
 
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('home')
 
 def home(request):
     return render(request, 'app/home.html')
@@ -55,21 +50,29 @@ def home(request):
 def reportes(request):
     return render(request, 'app/reportes.html')
 
+@login_required
 def ver_rutas(request):
-	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
-	
-	mapView = carrierServices.viewRoutesOn(date = tomorrow)
-	
-	return HttpResponse(mapView)
+    if hasattr(usuario, 'administrador'):
+	    tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	    mapView = carrierServices.viewRoutesOn(date = tomorrow)
+	    return HttpResponse(mapView)
+    else:
+        return redirect('home')
 
+@login_required
 def crear_rutas(request):
-	tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
-	
-	carrierServices.createRoutes(date = tomorrow)
-	
-	return redirect('ver_rutas')
+    usuario = request.user
+    if hasattr(usuario, 'administrador'):
+	    tomorrow = datetime.date.today() + datetime.timedelta(days = 1)
+	    carrierServices.createRoutes(date = tomorrow)
+	    return redirect('ver_rutas')
+    else:
+        return redirect('home')
 
 def registrarse(request):
+    if request.user.is_authenticated:
+        logout(request)
+
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
@@ -92,11 +95,6 @@ def registrarse(request):
     else:
         form = ClientForm()
     return render(request, 'app/registrarse.html', {'form': form})
-
-@login_required
-def envios(request):
-	return render(request, 'app/envios.html')
-
 
 @login_required
 def envios(request):
