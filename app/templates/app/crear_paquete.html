@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Paquete - Gestión Logística</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'app/css/crear_paquete.css' %}">
+</head>
+<body>
+	<main>
+		<h1>Crear Paquete</h1>
+		<form method="POST">
+            {% csrf_token %}
+            {% if messages %}
+				<ul>
+					{% for message in messages %}
+						<li class="{{ message.tags }}">{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+            {{ form.as_p }}
+            <button type="submit">Crear Paquete</button>
+        </form>
+	</main>
+	<footer>
+		<p>2025 Diseño de Software. Equipo 6.</p>
+	</footer>
+</body>
+</html>

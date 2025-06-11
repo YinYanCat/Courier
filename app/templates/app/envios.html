@@ -35,20 +35,31 @@
 							</tr>
 						</thead>
 						<tbody>
-								<tr data-href="/detalle_envios/1/">
-									<td class="column1">1</td>
-									<td class="column2">Juan Perez</td>
-									<td class="column3">En tránsito</td>
-									<td class="column4">Ciudad A - Ciudad B</td>
-									<td class="column5">1</td>
+							{% for paquete in paquetes %}
+								<tr data-href="{% url 'detalle_envios' paquete.id %}">
+									<td class="column1">{{ paquete.id }}</td>
+									<td class="column2">{{ paquete.client.usuario.first_name }} {{ paquete.client.usuario.last_name }}</td>
+									<td class="column3">
+										{% if paquete.route %}
+											En tránsito
+										{% else %}
+											Pendiente
+										{% endif %}
+									</td>
+									<td class="column4">
+										{% if paquete.route and paquete.route.truck %}
+											Bodega {{ paquete.warehouse.id }} - Camión {{ paquete.route.truck.id }}
+										{% else %}
+											No asignada
+										{% endif %}
+									</td>
+									<td class="column5">{{ paquete.id }}</td>
 								</tr>
-								<tr data-href="/detalle_envios/2/">
-									<td class="column1">2</td>
-									<td class="column2">Ana Gomez</td>
-									<td class="column3">Entregado</td>
-									<td class="column4">Ciudad B - Ciudad C</td>
-									<td class="column5">2</td>
+								{% empty %}
+								<tr>
+									<td colspan="5" class="text-center">No hay envíos disponibles.</td>
 								</tr>
+							{% endfor %}
 						</tbody>
 					</table>
 				</div>
