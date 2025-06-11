@@ -5,7 +5,7 @@ from openrouteservice import convert
 
 from openrouteservice.optimization import Job
 from openrouteservice.optimization import Vehicle
-
+from app.utils.geocoding import ors_client
 from ..repositories.CarrierRepository import CarrierRepository
 
 SERVICE_TIME = 60

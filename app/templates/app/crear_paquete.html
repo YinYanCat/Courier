@@ -10,26 +10,18 @@
 <body>
 	<main>
 		<h1>Crear Paquete</h1>
-		<form action="{% url 'crear_paquete' %}" method="POST">
+		<form method="POST">
             {% csrf_token %}
-            <label for="destinatario">Destinatario:</label>
-            <input type="text" id="destinatario" name="destinatario" required>
-
-            <label for="direccion">Ruta:</label>
-            <input type="text" id="direccion" name="direccion" required>
-            
-            <label for="dimensiones">Dimensiones (cm):</label>
-            <input type="text" id="largo" name="largo" required>
-            <input type="text" id="ancho" name="ancho" required>
-            <input type="text" id="alto" name="alto" required>
-            
-            <label for="peso">Peso (kg):</label>
-            <input type="number" id="peso" name="peso" step="0.01" required>
-
-            <label for="Dirección de Entrega">Dirección de Entrega:</label>
-            <input type="text" id="direccion_entrega" name="direccion_entrega" required>
-            
+            {% if messages %}
+				<ul>
+					{% for message in messages %}
+						<li class="{{ message.tags }}">{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+            {{ form.as_p }}
             <button type="submit">Crear Paquete</button>
+        </form>
 	</main>
 	<footer>
 		<p>2025 Diseño de Software. Equipo 6.</p>

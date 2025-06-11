@@ -13,6 +13,6 @@ urlpatterns = [
 	
 	path('envios/', envios, name='envios'),
 	path('detalle_envios/<int:pk>/', detalle_envios, name = 'detalle_envios'),
-  path('reportes/', reportes, name = 'reportes'),
-  path('crear_paquete/', crear_paquete, name = 'crear_paquete'),
+  	path('reportes/', reportes, name = 'reportes'),
+  	path('crear_paquete/', crear_paquete, name = 'crear_paquete'),
 ]

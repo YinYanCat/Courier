@@ -1,18 +1,23 @@
-from django.contrib.auth.models import Cliente, Paquete
+from app.models import Usuario, Cliente, DeliveryOrder, Warehouse, Route
 from datetime import date
+from app.utils.geocoding import ors_client
 
-class PaqueteFactory:
-	def __init__(self, cliente: Cliente):
-		self.cliente = cliente
+class OrderFactory:
+	def __init__(self, usuario: Usuario):
+		try:
+			self.cliente = Cliente.objects.get(usuario=usuario)
+		except Cliente.DoesNotExist:
+			raise ValueError("Este usuario no está registrado como Cliente.")
 
-	def crear_paquete(self, descripcion, alto, ancho, largo, peso, dir_entrega):
-		return Paquete.objects.create(
-			cliente=self.cliente,
-			descripcion=descripcion,
-			alto=alto,
-			ancho=ancho,
-			largo=largo,
-			peso=peso,
-			dir_entrega=dir_entrega,
-			fecha_envio=date.today()
-		)
+	def crear_paquete(self, warehouse: Warehouse, alto, ancho, largo, peso, destino_str):
+		lon, lat = ors_client.pelias_search(text=destino_str)['features'][0]['geometry']['coordinates']
+		return DeliveryOrder.objects.create(
+            client=self.cliente,
+            warehouse=warehouse,
+            destination_lat=lat,
+            destination_lon=lon,
+            dim_x=ancho,
+            dim_y=alto,
+            dim_z=largo,
+            weight=peso
+        )

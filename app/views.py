@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from app.forms.ClientForm import ClientForm
+from app.forms.OrderForm import OrderForm
 from app.factories.ClientFactory import ClientFactory
+from app.factories.OrderFactory import OrderFactory
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import Cliente, Administrador, Repartidor, Usuario
@@ -46,7 +48,6 @@ def login_view(request):
     return render(request, 'app/login.html')
 
 
-@login_required
 def home(request):
     return render(request, 'app/home.html')
 
@@ -105,8 +106,34 @@ def envios(request):
 def detalle_envios(request, pk):
     return render(request, 'app/detalle_envios.html', {'envio': pk})
 
+@login_required
 def crear_paquete(request):
-    return render(request, 'app/crear_paquete.html')
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            warehouse = form.cleaned_data['warehouse']
+            destino = form.cleaned_data['destination']
+            dim_x = form.cleaned_data['dim_x']
+            dim_y = form.cleaned_data['dim_y']
+            dim_z = form.cleaned_data['dim_z']
+            peso = form.cleaned_data['weight']
+            
+            # Crear el paquete con coordenadas
+            factory = OrderFactory(request.user)  # Asumiendo que Cliente hereda de User o está relacionado
+            factory.crear_paquete(
+                warehouse=warehouse,
+                alto=dim_y,
+                ancho=dim_x,
+                largo=dim_z,
+                peso=peso,
+                destino_str=destino
+            )
+            messages.success(request, 'Paquete creado con éxito.')
+            return redirect('crear_paquete')  # Cambia esto por la URL real de confirmación
+    else:
+        form = OrderForm()
+
+    return render(request, 'app/crear_paquete.html', {'form': form})
 
 def nuevo_paquete(request):
     if request.method == 'POST':
