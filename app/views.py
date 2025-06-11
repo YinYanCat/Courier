@@ -5,7 +5,7 @@ from app.factories.ClientFactory import ClientFactory
 from app.factories.OrderFactory import OrderFactory
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import Cliente, Administrador, Repartidor, Usuario
+from .models import Cliente, Administrador, Repartidor, Usuario, DeliveryOrder
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -100,7 +100,15 @@ def envios(request):
 
 @login_required
 def envios(request):
-    return render(request, 'app/envios.html')
+    usuario = request.user
+    paquetes = []
+    try:
+        cliente = Cliente.objects.get(usuario=usuario)
+        paquetes = DeliveryOrder.objects.filter(client=cliente)
+    except Cliente.DoesNotExist:
+        pass
+
+    return render(request, 'app/envios.html', {'paquetes':paquetes})
 
 @login_required
 def detalle_envios(request, pk):
