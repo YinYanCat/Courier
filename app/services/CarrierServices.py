@@ -1,19 +1,19 @@
 import folium
-import openrouteservice
 
 from openrouteservice import convert
 
 from openrouteservice.optimization import Job
 from openrouteservice.optimization import Vehicle
-from app.utils.geocoding import ors_client
-from ..repositories.CarrierRepository import CarrierRepository
+
+from app.utils.ors import geoService
+
+from app.repositories.CarrierRepository import CarrierRepository
 
 SERVICE_TIME = 60
 
 class CarrierServices:
-	RouteManager = openrouteservice.Client(key = '5b3ce3597851110001cf62487b370cd078704024863ab1977ca4c5dc') # Remove key
-	
-	def createRoutes(SELF, date):
+	@staticmethod
+	def createRoutes(date):
 		orsJobs = []
 		orsTrucks = []
 		
@@ -39,7 +39,7 @@ class CarrierServices:
 				
 				orsJobs.append(Job(delivery.id, location = (delivery.destination_lon, delivery.destination_lat), service = SERVICE_TIME, amount = dims))
 		
-		routes = SELF.RouteManager.optimization(jobs = orsJobs, vehicles = orsTrucks, geometry = True)['routes']
+		routes = geoService.optimization(jobs = orsJobs, vehicles = orsTrucks, geometry = True)['routes']
 		
 		import json
 		
@@ -54,29 +54,47 @@ class CarrierServices:
 		
 		return
 	
-	def viewRoutesOn(SELF, date):
-		warehouse = CarrierRepository.getWarehouses()[0]
+	@staticmethod
+	def getRouteMap(routeID):
+		route = CarrierRepository.getRoute(routeID = routeID)
+		warehouse = route.truck.warehouse
+		
+		routeCoordinates = CarrierServices.__getRouteCoordinates(route)
+		warehouseCoordinates = (warehouse.location_lat, warehouse.location_lon)
+		
+		mapView = folium.Map(location = warehouseCoordinates, zoom_start = 15, tiles = 'CartoDB Positron')
+		
+		for delivery in CarrierRepository.getDeliveriesBy(routeID = route.id):
+			folium.Marker(location = (delivery.destination_lat, delivery.destination_lon), icon = folium.Icon(prefix = 'fa', icon = 'box-open', color = 'blue')).add_to(mapView)
+		
+		folium.Marker(location = warehouseCoordinates, icon = folium.Icon(prefix = 'fa', icon = 'house', color = 'orange')).add_to(mapView)
+		folium.PolyLine(locations = routeCoordinates, color = 'blue', dashArray = 5).add_to(mapView)
+		
+		return mapView.get_root().render()
+	
+	@staticmethod
+	def getRoutesMap(warehouseID, date):
+		warehouse = CarrierRepository.getWarehouses()[0] # TEMP
 		
 		mapView = folium.Map(location = (warehouse.location_lat, warehouse.location_lon), zoom_start = 15, tiles = 'CartoDB Positron')
 		
 		routes = CarrierRepository.getRoutes(date = date)
 		
-		count = 0
-		colors = ['red', 'green', 'blue']
-		
 		for route in routes:
-			deliveries = CarrierRepository.getDeliveriesBy(routeID = route.id)
+			for delivery in CarrierRepository.getDeliveriesBy(routeID = route.id):
+				folium.Marker(location = (delivery.destination_lat, delivery.destination_lon), icon = folium.Icon(prefix = 'fa', icon = 'box-open', color = 'blue')).add_to(mapView)
 			
-			for delivery in deliveries:
-				folium.Marker(location = (delivery.destination_lat, delivery.destination_lon), icon = folium.Icon(color = colors[count % len(colors)])).add_to(mapView)
+			routeCoordinates = CarrierServices.__getRouteCoordinates(route)
 			
-			routeLocations = []
-			
-			for location in convert.decode_polyline(route.data['geometry'])['coordinates']:
-				routeLocations.append((location[1], location[0]))
-			
-			folium.PolyLine(locations = routeLocations, tooltip = f'Ruta {route.id}', color = colors[count % len(colors)], dashArray = 5).add_to(mapView)
-			
-			count += 1
+			folium.PolyLine(locations = routeCoordinates, tooltip = f'ID de ruta: {route.id}', color = 'blue', dashArray = 5).add_to(mapView)
 		
 		return mapView.get_root().render()
+	
+	@staticmethod
+	def __getRouteCoordinates(route):
+		coordinates = []
+		
+		for coordinate in convert.decode_polyline(route.data['geometry'])['coordinates']:
+			coordinates.append((coordinate[1], coordinate[0]))
+		
+		return coordinates

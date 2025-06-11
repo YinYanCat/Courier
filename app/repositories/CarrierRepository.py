@@ -1,7 +1,7 @@
-from ..models import Warehouse
-from ..models import Truck
-from ..models import Route
-from ..models import DeliveryOrder
+from app.models import Warehouse
+from app.models import Truck
+from app.models import Route
+from app.models import DeliveryOrder
 
 class CarrierRepository:
 	@staticmethod
@@ -19,6 +19,10 @@ class CarrierRepository:
 	@staticmethod
 	def getDeliveriesFrom(warehouseID, amount):
 		return DeliveryOrder.objects.filter(warehouse_id = warehouseID, route_id = None)[0 : amount]
+	
+	@staticmethod
+	def getRoute(routeID):
+		return Route.objects.get(id = routeID)
 	
 	@staticmethod
 	def getRoutes(date):
