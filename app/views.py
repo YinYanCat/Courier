@@ -159,7 +159,7 @@ def perfil(request):
             {'nombre': 'Reportes', 'url': 'reportes'},
             {'nombre': 'Crear Rutas', 'url': 'route_creation'},
             {'nombre': 'Ver Rutas', 'url': 'route_selection'},
-            {'nombre': 'Asignar Conductores', 'url': 'home'} #cambiar
+            {'nombre': 'Asignar Conductores', 'url': 'asignar_conductor'} #cambiar
         ])
     if hasattr(usuario, 'repartidor'):
         roles.append('Repartidor')
