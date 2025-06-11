@@ -155,8 +155,8 @@ def perfil(request):
         roles.append('Administrador')
         opciones.extend([
             {'nombre': 'Reportes', 'url': 'reportes'},
-            {'nombre': 'Crear Rutas', 'url': 'crear_rutas'},
-            {'nombre': 'Ver Rutas', 'url': 'ver_rutas'},
+            {'nombre': 'Crear Rutas', 'url': 'route_creation'},
+            {'nombre': 'Ver Rutas', 'url': 'route_selection'},
             {'nombre': 'Asignar Conductores', 'url': 'home'} #cambiar
         ])
     if hasattr(usuario, 'repartidor'):
