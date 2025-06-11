@@ -1,4 +1,4 @@
-from models import Cliente, Paquete
+from models import Cliente, DeliveryOrder
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 
 class ClientServices:
@@ -9,11 +9,11 @@ class ClientServices:
 		self.cliente = cliente
 
 	def getOrders(self):
-		return Paquete.objects.filter(usuario=self.cliente)
+		return DeliveryOrder.objects.filter(usuario=self.cliente)
 	
 	def getOrder(self, paquete_id):
 		try:
-			return Paquete.objects.get(id=paquete_id, cliente=self.cliente)
+			return DeliveryOrder.objects.get(id=paquete_id, cliente=self.cliente)
 		
 		except ObjectDoesNotExist:
 			return None

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Conductor - Gestión Logística</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'app/css/crear_paquete.css' %}">
+</head>
+<body>
+	<main>
+		<h1>Asignar Conductor</h1>
+        <form method="POST">
+            {% csrf_token %}
+		    <table>
+                <thead>
+                    <tr>
+                        <th>Camión</th>
+                        <th>Repartidor Asignado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for camion in camiones %}
+                    <tr>
+                        <td>{{ camion.id }}</td>
+                        <td>
+                            <input type="hidden" name="truck_id" value="{{ camion.id }}">
+                            <select name="repartidor_id">
+                                <option value="none" {% if not camion.delivery_man %}selected{% endif %}>Ninguno</option>
+                                {% for r in repartidores %}
+                                    <option value="{{ r.id }}"
+                                        {% if camion.delivery_man and camion.delivery_man.id == r.id %}selected{% endif %}>
+                                        {{ r.usuario.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit">Asignar</button>
+        </form>
+	</main>
+	<footer>
+		<p>2025 Diseño de Software. Equipo 6.</p>
+	</footer>
+</body>
+</html>
