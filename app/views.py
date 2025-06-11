@@ -157,3 +157,35 @@ def nuevo_paquete(request):
         messages.success(request, 'Paquete creado con éxito.')
         return redirect('envios')
     return render(request, 'app/crear_paquete.html')
+
+@login_required
+def perfil(request):
+    usuario = request.user
+    roles = []
+    opciones = []
+
+    if hasattr(usuario, 'cliente'):
+        roles.append('Cliente')
+        opciones.extend([
+            {'nombre': 'Mis Envios', 'url': 'envios'},
+            {'nombre': 'Crear Paquete', 'url': 'crear_paquete'}
+        ])
+    if hasattr(usuario, 'administrador'):
+        roles.append('Administrador')
+        opciones.extend([
+            {'nombre': 'Reportes', 'url': 'reportes'},
+            {'nombre': 'Crear Rutas', 'url': 'crear_rutas'},
+            {'nombre': 'Ver Rutas', 'url': 'ver_rutas'},
+            {'nombre': 'Asignar Conductores', 'url': 'home'} #cambiar
+        ])
+    if hasattr(usuario, 'repartidor'):
+        roles.append('Repartidor')
+        opciones.extend([
+            {'nombre': 'Ver Envios Asignados', 'url': 'home'}, #cambiar
+            {'nombre': 'Ver Mis Rutas', 'url': 'home'} #cambiar
+        ])
+    return render(request, 'app/profile.html', {
+        'usuario': usuario,
+        'roles': roles,
+        'opciones': opciones
+    })
