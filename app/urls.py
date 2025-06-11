@@ -20,7 +20,9 @@ urlpatterns = [
 	path('registrarse/', registrarse, name = 'registrarse'),
 	
 	path('reportes/', reportes, name = 'reportes'),
-  	path('crear_paquete/', crear_paquete, name = 'crear_paquete'),
+  path('crear_paquete/', crear_paquete, name = 'crear_paquete'),
+	path('perfil', perfil, name='perfil'),
+	path('logout', logout_view, name='logout'),
 	
 	path('envios/', envios, name = 'envios'),
 	path('detalle_envios/<int:pk>/', detalle_envios, name = 'detalle_envios')
