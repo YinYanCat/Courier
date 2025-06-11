@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
 	rut = models.CharField(max_length = 16, primary_key = True)
@@ -51,7 +51,7 @@ class Route(models.Model):
 	data = models.JSONField()
 
 class DeliveryOrder(models.Model):
-	client = models.ForeignKey(Cliente, on_delete = models.PROTECT)
+	client = models.ForeignKey(Cliente, on_delete = models.PROTECT, null = False)
 	warehouse = models.ForeignKey(Warehouse, on_delete = models.PROTECT, null = False)
 	
 	destination_lon = models.FloatField(default = None, null = False)
