@@ -2,7 +2,7 @@ from django import forms
 from app.models import Usuario
 from app.utils.Rut import checkRut, processRut
 
-class ClientForm(forms.Form):
+class UserForm(forms.Form):
 	rut = forms.CharField(max_length=16)
 	nombre = forms.CharField(max_length=50)
 	apellido = forms.CharField(max_length=50)

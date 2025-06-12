@@ -9,7 +9,10 @@
 </head>
 <body>
     <main>
-        <a href="logout">Logout</a> 
+        <div class="perfil-nav">
+            <a href="{% url 'home' %}" class="perfil-link">Inicio</a>
+            <a href="{% url 'logout' %}" class="perfil-link">Cerrar Sesión</a>
+        </div>
         <h1>Perfil del Usuario</h1>
         <p><strong>Nombre de Usuario:</strong> {{ usuario.username }}</p>
         <p><strong>Correo Electrónico:</strong> {{ usuario.email }}</p>

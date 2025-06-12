@@ -6,9 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 
-from app.forms.ClientForm import ClientForm
+from app.forms.UserForm import UserForm
 from app.forms.OrderForm import OrderForm
 from app.factories.ClientFactory import ClientFactory
+from app.factories.CarrierFactory import CarrierFactory
 from app.factories.OrderFactory import OrderFactory
 from .models import Cliente, Administrador, Repartidor, Usuario, DeliveryOrder, Truck
 from .services.AdminServices import AdminServices
@@ -47,10 +48,15 @@ def registrarse(request):
         logout(request)
 
     if request.method == 'POST':
-        form = ClientForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            factory = ClientFactory()
+            quiero_conducir = request.POST.get('quiero_ser_conductor') == 'on'
+            
+            if quiero_conducir:
+                 factory = CarrierFactory()
+            else:
+                factory = ClientFactory()
             try:
                 factory.crear_usuario(
                     rut=data['rut'],
@@ -61,12 +67,15 @@ def registrarse(request):
                     correo=data['correo'],
                     telefono=data['telefono']
                 )
-                messages.success(request, 'Cliente creado con éxito. Ahora puedes iniciar sesión.')
+                if quiero_conducir:
+                    messages.success(request, 'Conductor creado con éxito. Ahora puedes iniciar sesión.')
+                else:
+                    messages.success(request, 'Cliente creado con éxito. Ahora puedes iniciar sesión.')
                 return redirect('login')
             except Exception as e:
                 form.add_error(None, str(e))
     else:
-        form = ClientForm()
+        form = UserForm()
     return render(request, 'app/registrarse.html', {'form': form})
 
 @login_required
@@ -125,48 +134,34 @@ def crear_paquete(request):
 	
 	return render(request, 'app/crear_paquete.html', {'form': form})
 
-def nuevo_paquete(request):
-	if request.method == 'POST':
-		#cliente = request.POST.get('cliente')
-		#ruta = request.POST.get('ruta')
-		#alto = request.POST.get('alto')
-		#ancho = request.POST.get('ancho')
-		#largo = request.POST.get('largo')
-		#peso = request.POST.get('peso')
-		#dir_entrega = request.POST.get('dir_entrega')
-
-		# TODO: Validar los datos del formulario
-		messages.success(request, 'Paquete creado con éxito.')
-		return redirect('envios')
-	
-	return render(request, 'app/crear_paquete.html')
-
 @login_required
 def perfil(request):
     usuario = request.user
     roles = []
     opciones = []
 
+    if hasattr(usuario, 'cliente') or hasattr(usuario, 'repartidor'):
+         opciones.extend([
+            {'nombre': 'Envios', 'url': 'envios'},
+        ])
     if hasattr(usuario, 'cliente'):
         roles.append('Cliente')
         opciones.extend([
-            {'nombre': 'Mis Envios', 'url': 'envios'},
             {'nombre': 'Crear Paquete', 'url': 'crear_paquete'}
         ])
     if hasattr(usuario, 'administrador'):
         roles.append('Administrador')
         opciones.extend([
-            {'nombre': 'Reportes', 'url': 'reportes'},
+            #{'nombre': 'Reportes', 'url': 'reportes'},
             {'nombre': 'Crear Rutas', 'url': 'route_creation'},
             {'nombre': 'Ver Rutas', 'url': 'route_selection'},
-            {'nombre': 'Asignar Conductores', 'url': 'asignar_conductor'} #cambiar
+            {'nombre': 'Asignar Conductores', 'url': 'asignar_conductor'}
         ])
     if hasattr(usuario, 'repartidor'):
         roles.append('Repartidor')
-        opciones.extend([
-            {'nombre': 'Ver Envios Asignados', 'url': 'home'}, #cambiar
-            {'nombre': 'Ver Mis Rutas', 'url': 'home'} #cambiar
-        ])
+        #opciones.extend([
+        #    {'nombre': 'Ver Mis Rutas', 'url': 'home'} #cambiar
+        #])
     return render(request, 'app/profile.html', {
         'usuario': usuario,
         'roles': roles,
