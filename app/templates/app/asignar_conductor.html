@@ -9,6 +9,15 @@
 </head>
 <body>
 	<main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 		<h1>Asignar Conductor</h1>
         <form method="POST">
             {% csrf_token %}
@@ -22,10 +31,9 @@
                 <tbody>
                     {% for camion in camiones %}
                     <tr>
-                        <td>{{ camion.id }}</td>
+                        <td>Camión {{ camion.id }}</td>
                         <td>
-                            <input type="hidden" name="truck_id" value="{{ camion.id }}">
-                            <select name="repartidor_id">
+                            <select name="repartidor_{{ camion.id }}">
                                 <option value="none" {% if not camion.delivery_man %}selected{% endif %}>Ninguno</option>
                                 {% for r in repartidores %}
                                     <option value="{{ r.id }}"

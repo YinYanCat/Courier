@@ -182,13 +182,14 @@ def asignar_conductor(request):
     camiones = Truck.objects.all()
     repartidores = Repartidor.objects.all()
     if request.method == 'POST':
-        truck_id = request.POST.get('truck_id')
-        carrier_id = request.POST.get('repartidor_id')
-        try:
-            AdminServices().setTruckDriver(truck_id,carrier_id)
-            messages.success(request, 'Conductor asignado correctamente.')
-        except ObjectDoesNotExist as e:
-            messages.error(request, f'Error: {str(e)}')
+        for camion in camiones:
+            key = f'repartidor_{camion.id}'
+            repartidor_id = request.POST.get(key)
+            try:
+                AdminServices().setTruckDriver(camion.id,repartidor_id)
+            except ObjectDoesNotExist as e:
+                messages.error(request, f'Error con camión {camion.id}: {str(e)}')
+        messages.success(request, 'Asignaciones actualizadas correctamente.')        
         return redirect('asignar_conductor')
     return render(request, 'app/asignar_conductor.html',{
                 'camiones': camiones,
